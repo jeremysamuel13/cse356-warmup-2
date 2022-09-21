@@ -34,7 +34,7 @@ APP.post('/ttt/play', (req: Request<TTTRequest>, res: Response<TTTResponse>) => 
     res.send(resBody)
 });
 
-APP.use('/', express.static(path.resolve(__dirname, '../../build')))
+APP.use('/', express.static(path.resolve(__dirname, '../../build'), { index: false }))
 
 APP.get('/ttt', (req, res, next) => {
     fs.readFile(path.resolve(__dirname, '../../build/index.html'), 'utf-8', (err, data) => {
