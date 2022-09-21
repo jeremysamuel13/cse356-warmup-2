@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import TTTBoard from './TTTBoard'
+import TTTForm from './TTTForm'
+
 
 interface AppProps {
   isHome: boolean,
@@ -11,20 +13,10 @@ interface AppProps {
 
 function App({ isHome, name, date }: AppProps) {
   if (isHome) {
-    // FORM
-    return <form>
-      <label htmlFor="name">Name:</label>
-      <input type="text" id="name" name="name" /><br />
-      <input type="submit" value="Submit"></input>
-    </form>
+    return (<TTTForm />)
   }
 
-  return (<div>
-    <div>
-      {`Hello ${name}, ${date}`}
-    </div>
-    <TTTBoard />
-  </div>)
+  return (<TTTBoard name={name} date={date} />)
 
 }
 

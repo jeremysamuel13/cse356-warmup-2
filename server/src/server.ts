@@ -10,6 +10,8 @@ import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 
 import App from '../../src/App'
+import TTTBoard from '../../src/TTTBoard';
+import TTTForm from '../../src/TTTForm';
 
 // Allow for interaction with dotenv
 dotenv.config();
@@ -47,7 +49,8 @@ APP.get('/ttt', (req, res, next) => {
 
         console.log(`Query param: ${name}`)
 
-        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: !name, name: `${name}`, date: new Date() }))
+        const element = !name ? React.createElement(TTTBoard, { name: `${name}`, date: new Date() }) : React.createElement(TTTForm)
+        const rootHTML = ReactDOMServer.renderToString(element)
 
         return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
     })
