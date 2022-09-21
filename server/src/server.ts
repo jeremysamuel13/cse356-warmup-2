@@ -53,9 +53,12 @@ APP.get('/ttt', (req, res, next) => {
         const element = React.createElement(App, initialState)
         const rootHTML = ReactDOMServer.renderToString(element)
 
-        console.log(rootHTML)
+        const afterState = data.replace(`window.__APP_INITIAL_STATE__ = "";`, `window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)};`)
+        const afterHTML = afterState.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div>`)
 
-        return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div>`).replace(`window.__APP_INITIAL_STATE__ = "";`, `window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)};`))
+        console.log(afterHTML)
+
+        return res.send(afterHTML)
     })
 
 })
