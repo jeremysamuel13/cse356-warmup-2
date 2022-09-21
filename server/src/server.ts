@@ -45,8 +45,10 @@ APP.get('/ttt', (req, res, next) => {
 
         const name = req.query.name
 
+        console.log(`Query param: ${name}`)
+
         const info = name ? `<div id="info">Hello ${name}, ${new Date()}</div>` : ""
-        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: !name }))
+        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: name === undefined }))
 
         return res.send(data.replace(`<div id="info"></div>`, info).replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
     })

@@ -40,7 +40,7 @@ const TTTBoard = () => {
         console.log({ msg: "grid changed", grid })
     }, [grid])
 
-    const elToButton = (gridIndex: number) => <button className="ttt-element" key={`grid-el-${gridIndex}`} onClick={!loading && winner === ' ' && grid[gridIndex] === ' ' ? () => {
+    const elToButton = (gridIndex: number) => <button className="ttt-element" key={`ttt-element-${gridIndex}`} onClick={!loading && winner === ' ' && grid[gridIndex] === ' ' ? () => {
         const cloned: TTTGrid = [...grid]
         cloned[gridIndex] = 'X'
         setGrid(cloned)
@@ -48,7 +48,7 @@ const TTTBoard = () => {
     } : undefined}>{grid[gridIndex] === ' ' ? <span>&nbsp;</span> : <span>{grid[gridIndex]}</span>}</button>
 
     return <div className="ttt-board">
-        {Array.from(Array(3).keys()).map((idx) => <div className="ttt-row" >
+        {Array.from(Array(3).keys()).map((idx) => <div key={`ttt-row-${idx}`} className="ttt-row" >
             {Array.from(Array(9).keys()).slice(idx * 3, (idx + 1) * 3).map((val) => elToButton(val))}
         </div>)}
 
