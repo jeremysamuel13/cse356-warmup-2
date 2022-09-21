@@ -56,6 +56,7 @@ APP.get('/ttt', (req, res, next) => {
         const afterState = data.replace(`window.__APP_INITIAL_STATE__ = "";`, `window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)};`)
         const afterHTML = afterState.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div>`)
 
+        console.log(JSON.stringify(initialState))
         console.log(afterHTML)
 
         return res.send(afterHTML)
