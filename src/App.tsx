@@ -3,11 +3,13 @@ import './App.css';
 import TTTBoard from './TTTBoard'
 
 interface AppProps {
-  isHome: boolean
+  isHome: boolean,
+  name: string,
+  date: Date
 }
 
 
-function App({ isHome }: AppProps) {
+function App({ isHome, name, date }: AppProps) {
   if (isHome) {
     // FORM
     return <form>
@@ -17,7 +19,12 @@ function App({ isHome }: AppProps) {
     </form>
   }
 
-  return <TTTBoard />
+  return (<div>
+    <div>
+      {`Hello ${name}, ${date}`}
+    </div>
+    <TTTBoard />
+  </div>)
 
 }
 

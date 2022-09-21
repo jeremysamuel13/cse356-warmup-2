@@ -43,14 +43,13 @@ APP.get('/ttt', (req, res, next) => {
             return res.status(500).send("Unexpected error!")
         }
 
-        const name = req.query.name
+        const name = req.query.name as string
 
         console.log(`Query param: ${name}`)
 
-        const info = name ? `<div id="info">Hello ${name}, ${new Date()}</div>` : ""
-        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: name === undefined }))
+        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: name === undefined, name, date: new Date() }))
 
-        return res.send(data.replace(`<div id="info"></div>`, info).replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
+        return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
     })
 
 })
