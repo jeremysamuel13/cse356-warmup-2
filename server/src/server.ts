@@ -50,7 +50,7 @@ APP.get('/ttt', (req, res, next) => {
 
         console.log(`Query param: ${name}, isForm: ${isForm}`)
 
-        const element = isForm ? React.createElement(TTTBoard, { name: `${name}`, date: new Date() }) : React.createElement(TTTForm)
+        const element = isForm ? React.createElement(TTTForm) : React.createElement(TTTBoard, { name: `${name}`, date: new Date() })
 
         const rootHTML = ReactDOMServer.renderToString(element)
 
