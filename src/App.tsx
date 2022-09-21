@@ -4,14 +4,7 @@ import TTTBoard from './TTTBoard'
 import TTTForm from './TTTForm'
 
 
-interface AppProps {
-  isHome: boolean,
-  name: string,
-  date: Date
-}
-
-
-function App({ isHome, name, date }: AppProps) {
+function App({ isHome, name, date }: any) {
   if (isHome) {
     return (<TTTForm />)
   }

@@ -7,7 +7,9 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-root.render(<React.StrictMode>
-  <App isHome={true} name={"default"} date={new Date()} />
-</React.StrictMode>)
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
 
