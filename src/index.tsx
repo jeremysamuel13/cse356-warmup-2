@@ -5,7 +5,7 @@ import App from './App';
 
 const root = ReactDOM.hydrateRoot(
   document.getElementById('root') as HTMLElement, <React.StrictMode>
-  <App isHome={false} />
+  <App isHome={true} />
 </React.StrictMode>
 );
 
