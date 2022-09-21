@@ -48,12 +48,14 @@ APP.get('/ttt', (req, res, next) => {
 
         console.log(`Query param: ${name}, isForm: ${isForm}`)
 
-        const element = React.createElement(App, { isHome: isForm, name: `${name}`, date: new Date() })
+        const initialState = { isHome: isForm, name: name as string, date: new Date() }
+
+        const element = React.createElement(App, initialState)
         const rootHTML = ReactDOMServer.renderToString(element)
 
         console.log(rootHTML)
 
-        return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div>`))
+        return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div>`).replace(`window.__APP_INITIAL_STATE__ = "";`, `window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)};`))
     })
 
 })
