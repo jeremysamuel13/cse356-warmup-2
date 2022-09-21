@@ -23,24 +23,6 @@ APP.use(express.json())
 
 APP.get('/', (req, res) => res.send("Welcome from server!"))
 
-APP.use('/ttt', express.static(path.resolve('root', 'warmup1', 'build')))
-
-APP.get('/ttt', (req, res, next) => {
-    fs.readFile(path.resolve('/root/warmup1/build/index.html'), 'utf-8', (err, data) => {
-        if (err) {
-            console.log(err)
-            return res.status(500).send("Unexpected error!")
-        }
-
-        const name = req.query.name
-
-        let rootHTML = name ? `<div id="info">Hello ${name}, ${new Date()}</div>` : ""
-        rootHTML += ReactDOMServer.renderToString(React.createElement(App, { isHome: !name }))
-
-        return res.send(data.replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
-    })
-})
-
 // TTT API
 APP.post('/ttt/play', (req: Request<TTTRequest>, res: Response<TTTResponse>) => {
     console.log(req.body)
@@ -51,6 +33,34 @@ APP.post('/ttt/play', (req: Request<TTTRequest>, res: Response<TTTResponse>) => 
 
     res.send(resBody)
 });
+
+APP.use('/', express.static(path.resolve(__dirname, '../../build')))
+
+APP.get('/ttt', (req, res, next) => {
+    fs.readFile(path.resolve(__dirname, '../../build/index.html'), 'utf-8', (err, data) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).send("Unexpected error!")
+        }
+
+        const name = req.query.name
+
+        const info = name ? `<div id="info">Hello ${name}, ${new Date()}</div>` : ""
+        const rootHTML = ReactDOMServer.renderToString(React.createElement(App, { isHome: !name }))
+
+        return res.send(data.replace(`<div id="info"></div>`, info).replace(`<div id="root"></div>`, `<div id="root">${rootHTML}</div >`))
+    })
+
+})
+
+// APP.use((err, req, res, next) => {
+//     if (req.xhr) {
+//         console.log(err)
+//         res.status(500).send({ error: 'Something failed!' })
+//     } else {
+//         next(err)
+//     }
+// })
 
 // Start server
 APP.listen(PORT, () => console.log(`Server started on port ${PORT}`));

@@ -3,7 +3,8 @@
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "noEmit": true
   },
   "include": [
     "./src"

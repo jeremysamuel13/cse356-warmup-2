@@ -27,8 +27,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:server": "npx tsc --project server/tsconfig.json",
-    "start:server": "node server/src/server.js",
-    "start:server:bg": "pm2 start server/src/server.js --name warmup-1-server"
+    "run:server": "npx ts-node server/src/server.ts",
+    "start:server": "pm2 start server/src/server.ts --name warmup-1-server",
+    "stop:server": "pm2 stop warmup-1-server"
   },
   "eslintConfig": {
     "extends": [

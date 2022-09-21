@@ -1,0 +1,7 @@
+.ttt-element {
+    border-color: black;
+    display: inline-block;
+    background-color: white;
+    height: 2rem;
+    width: 2rem;
+}

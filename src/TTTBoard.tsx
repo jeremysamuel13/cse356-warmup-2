@@ -1,35 +1,60 @@
 import { useState, useEffect } from "react"
-import {Players, TTTGrid, TTTRequest, TTTResponse, Winner} from "../server/src/interface"
+import { Players, TTTElement, TTTGrid, TTTRequest, TTTResponse, Winner } from "../server/src/interface"
+import "./TTTBoard.css"
+
 
 const TTTBoard = () => {
     const [grid, setGrid] = useState<TTTGrid>([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
     const [winner, setWinner] = useState<Winner>(' ')
     const [turn, setTurn] = useState<Players>('X')
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
-        if(turn === 'O'){
+        if (turn === 'O') {
+            console.log("CPU Turn")
+
+            setLoading(true)
             // Have CPU make turn
-            fetch("http://209.151.152.56/ttt/play", {
+            fetch("/ttt/play", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ grid })
             })
-            .then(response => response.json())
-            .then(data => {
-                setGrid(data.grid);  
-                setWinner(data.winner);
-            })
-
-            setTurn('X')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.grid)
+                    setGrid(data.grid);
+                    setWinner(data.winner);
+                })
+                .catch((err) => console.log(err))
+                .finally(() => {
+                    setLoading(false);
+                    setTurn('X');
+                })
+        } else {
+            console.log("User Turn")
         }
-    }, [turn])
+    }, [turn, grid])
+
+    useEffect(() => {
+        console.log({ msg: "grid changed", grid })
+    }, [grid])
+
+    const elToButton = (gridIndex: number) => <button className="ttt-element" key={`grid-el-${gridIndex}`} onClick={!loading && winner === ' ' && grid[gridIndex] === ' ' ? () => {
+        const cloned: TTTGrid = [...grid]
+        cloned[gridIndex] = 'X'
+        setGrid(cloned)
+        setTurn('O')
+    } : undefined}>{grid[gridIndex] === ' ' ? <span>&nbsp;</span> : <span>{grid[gridIndex]}</span>}</button>
 
     return <div className="ttt-board">
-        {grid.map((el, index) => <div id={`el-${index}`} className="ttt-element" onClick={(e) => {
-            const cloned: TTTGrid = [...grid]
-            cloned[index] = 'X'
-            setGrid(cloned)
-        }}>{el}</div>)}
+        {Array.from(Array(3).keys()).map((idx) => <div className="ttt-row" >
+            {Array.from(Array(9).keys()).slice(idx * 3, (idx + 1) * 3).map((val) => elToButton(val))}
+        </div>)}
+
+        {winner !== ' ' && <div>
+            Winner: {winner}
+        </div>}
     </div>
 
 
