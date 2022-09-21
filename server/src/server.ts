@@ -21,6 +21,15 @@ const PORT = process.env.PORT;
 // JSON Middleware
 APP.use(express.json())
 
+// Set Header
+APP.use((req, res, next) => {
+    if (req.method === 'GET' || req.method === 'POST') {
+        res.setHeader("X-CSE356", "63094ca6047a1139b66d985a")
+    }
+
+    next()
+})
+
 APP.get('/', (req, res) => res.send("Welcome from server!"))
 
 // TTT API
