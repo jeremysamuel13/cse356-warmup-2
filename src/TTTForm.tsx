@@ -1,12 +1,14 @@
 import React from 'react';
-import "./TTTBoard.css"
-
+import "./TTTForm.css"
 
 const TTTForm = () =>
-    <form>
-        <label htmlFor="name">Name:</label>
-        <input type="text" id="name" name="name" /><br />
-        <input type="submit" value="Submit"></input>
-    </form>
+    <div className='ttt-form-div'>
+        <form>
+            <label htmlFor="name">{'Name: '}
+                <input type="text" id="name" name="name" />
+            </label>
+            <input type="submit" value="Submit"></input>
+        </form>
+    </div>
 
 export default TTTForm;

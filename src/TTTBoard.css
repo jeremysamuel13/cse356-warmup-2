@@ -5,3 +5,11 @@
     height: 2rem;
     width: 2rem;
 }
+
+.board-comp {
+    display: block;
+}
+
+.info {
+    margin-bottom: 20px;
+}

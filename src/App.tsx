@@ -5,12 +5,9 @@ import TTTForm from './TTTForm'
 
 
 function App({ isHome, name, date }: any) {
-  if (isHome) {
-    return (<TTTForm />)
-  }
-
-  return (<TTTBoard name={name} date={date} />)
-
+  return <div className='app'>
+    {isHome ? <TTTForm /> : <TTTBoard name={name} date={date} />}
+  </div>
 }
 
 export default App;

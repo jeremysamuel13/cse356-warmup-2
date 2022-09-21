@@ -51,8 +51,8 @@ const TTTBoard = ({ name, date }: TTTProps) => {
         setTurn('O')
     } : undefined}>{grid[gridIndex] === ' ' ? <span>&nbsp;</span> : <span>{grid[gridIndex]}</span>}</button>
 
-    return <div>
-        <div>
+    return <div className="board-comp">
+        <div className="info">
             {`Hello ${name}, ${date}`}
         </div>
         <div className="ttt-board">
