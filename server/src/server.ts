@@ -2,8 +2,8 @@ import 'ignore-styles'
 
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { TTTRequest, TTTResponse } from './interface';
-import { advance } from './ttt';
+import { TTTRequest, TTTResponse } from './ttt/interface';
+import { advance } from './ttt/ttt';
 import fs from 'fs'
 import path from 'path'
 import React from 'react'

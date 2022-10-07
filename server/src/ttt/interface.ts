@@ -12,10 +12,11 @@ export type TTTElement = Players | typeof EMPTY_ELEMENT
 export type TTTGrid = [TTTElement, TTTElement, TTTElement, TTTElement, TTTElement, TTTElement, TTTElement, TTTElement, TTTElement]
 
 export interface TTTRequest {
-    grid: TTTGrid
+    grid: TTTGrid,
+
 }
 
-export interface TTTResponse {
+export interface TTTResponse extends ServerResponse {
     grid: TTTGrid,
     winner: Winner
 }

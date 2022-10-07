@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Players, TTTElement, TTTGrid, TTTRequest, TTTResponse, Winner } from "../server/src/interface"
+import { Players, TTTElement, TTTGrid, TTTRequest, TTTResponse, Winner } from "../server/src/ttt/interface"
 import "./TTTBoard.css"
 
 interface TTTProps {
