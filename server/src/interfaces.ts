@@ -1,5 +1,5 @@
 type Status = 'OK' | 'ERROR'
 
-interface ServerResponse {
+export interface ServerResponse {
     status: Status
 }

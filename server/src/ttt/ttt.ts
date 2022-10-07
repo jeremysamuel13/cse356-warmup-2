@@ -6,7 +6,7 @@ export const advance = (body: TTTGrid): TTTResponse => {
 
     // if user won
     if (winner !== RESULT_NO_WINNER) {
-        return { winner, grid: body }
+        return { winner, grid: body, status: 'OK' }
     }
 
     // otherwise, server makes move
@@ -18,7 +18,7 @@ export const makeMove = (body: TTTGrid): TTTResponse => {
     const legalMoveIndices = getAvailableSpaces(body)
 
     if (legalMoveIndices.length === 0) {
-        return { grid: body, winner: RESULT_TIE }
+        return { grid: body, winner: RESULT_TIE, status: 'OK' }
     }
 
     const randomIndex = Math.floor(Math.random() * legalMoveIndices.length)
@@ -29,7 +29,7 @@ export const makeMove = (body: TTTGrid): TTTResponse => {
     //determine winner
     const winner = determineWinner(grid)
 
-    return { grid, winner }
+    return { grid, winner, status: 'OK' }
 }
 
 export const determineWinner = (grid: TTTGrid): Winner => {

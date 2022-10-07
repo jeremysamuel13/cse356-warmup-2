@@ -1,21 +1,14 @@
 import { Schema, model, ObjectId } from 'mongoose';
 import { TTTGrid, Winner } from '../ttt/interface'
 
+
 interface IUserGame {
     user_id: ObjectId,
     start_date: Date,
     game_id: ObjectId
 }
 
-interface IRecord {
-    _id: ObjectId,
-    wins: number,
-    losses: number,
-    ties: number
-}
-
-interface IUser {
-    _id: ObjectId,
+export interface IUser {
     username: string,
     email: string,
     password: string,
@@ -25,10 +18,9 @@ interface IUser {
 }
 
 interface IGame {
-    _id: ObjectId,
     grid: TTTGrid,
     winner: Winner
-    user_id: ObjectId
+    user_game_id: ObjectId
 }
 
 function verificationKeyIsRequired(this: IUser) {
@@ -36,7 +28,6 @@ function verificationKeyIsRequired(this: IUser) {
 }
 
 const userSchema = new Schema<IUser>({
-    _id: { type: Schema.Types.ObjectId, unique: true },
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -52,10 +43,16 @@ const userGameSchema = new Schema<IUserGame>({
 })
 
 const gameSchema = new Schema<IGame>({
-    _id: { type: Schema.Types.ObjectId },
-    grid: { type: Object },
-    winner: { type: Object },
-    user_id: { type: Schema.Types.ObjectId }
+    grid: { type: [{ type: String, enum: ['X', 'O', ' '] }], validate: (val: TTTGrid) => val.length < 9 },
+    winner: { type: String, enum: ['X', 'O', 'T', ' '], default: ' ' },
+    user_game_id: { type: Schema.Types.ObjectId, required: true, ref: 'UserGame' }
 })
 
+userSchema.methods.comparePassword = function (candidatePassword: string, callback: any) {
+    callback(null, this.password === candidatePassword)
+}
+
+
 export const User = model<IUser>('User', userSchema)
+export const UserGame = model<IUserGame>('UserGame', userGameSchema)
+export const Game = model<IGame>('Game', gameSchema)

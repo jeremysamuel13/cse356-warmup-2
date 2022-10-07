@@ -1,3 +1,5 @@
+import { ServerResponse } from '../interfaces'
+
 export const PLAYER_CLIENT = 'X'
 export const PLAYER_SERVER = 'O'
 export const RESULT_TIE = 'T'
