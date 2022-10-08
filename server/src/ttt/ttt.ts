@@ -1,16 +1,92 @@
-import { TTTGrid, TTTResponse, RESULT_NO_WINNER, PLAYER_SERVER, Winner, EMPTY_ELEMENT, TTTElement, RESULT_TIE } from "./interface"
+import { Game, IGame, IUser, IUserGame, UserGame } from "../db/models"
+import { TTTGrid, TTTResponse, RESULT_NO_WINNER, PLAYER_SERVER, Winner, EMPTY_ELEMENT, TTTElement, RESULT_TIE, Move } from "./interface"
+import { Document } from "mongoose"
 
-export const advance = (body: TTTGrid): TTTResponse => {
+export const advance = async (inpUser: Document<unknown, any, IUser> & IUser, move: Move): Promise<TTTResponse> => {
+    const user = inpUser.toObject()
+
+    //get current grid or make a new game
+    const lastGameId = user.games[user.games.length - 1]
+    let userGame = await UserGame.findById(lastGameId).exec()
+
+    let game: Document<unknown, any, IGame> & IGame;
+
+    if (!userGame) {
+        userGame = await UserGame.create({
+            start_date: Date.now(),
+            user_id: user._id,
+            game_id: user._id
+        })
+
+        const emptyGrid: TTTGrid = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+        game = await Game.create({
+            grid: emptyGrid,
+            winner: ' ',
+            user_game_id: userGame.id
+        })
+
+        userGame.game_id = game.id
+        await userGame.save()
+
+        inpUser.games = [...inpUser.games, userGame.id]
+        await inpUser.save()
+    } else {
+        game = await Game.findOne({ user_game_id: userGame.id })
+
+        if (game.winner !== ' ') {
+            userGame = await UserGame.create({
+                start_date: Date.now(),
+                user_id: user._id,
+                game_id: user._id
+            })
+
+            const emptyGrid: TTTGrid = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+            game = await Game.create({
+                grid: emptyGrid,
+                winner: ' ',
+                user_game_id: userGame.id
+            })
+
+            userGame.game_id = game.id
+            await userGame.save()
+
+            inpUser.games = [...inpUser.games, userGame.id]
+            await inpUser.save()
+        }
+    }
+
+    const gameObj = game.toObject()
+
+    const body = gameObj.grid as TTTGrid
+
+    if (move && body[move] === ' ' && move >= 0 || move < 9) {
+        body[move] = 'X'
+    } else if (move) {
+        console.log("Invalid Move")
+        return { status: 'ERROR' }
+    }
 
     let winner = determineWinner(body)
 
-    // if user won
-    if (winner !== RESULT_NO_WINNER) {
+    // if user won or user didnt make a move
+    if (move === null || winner !== RESULT_NO_WINNER) {
+        game.grid = body
+        game.winner = winner
+        await game.save()
         return { winner, grid: body, status: 'OK' }
     }
 
     // otherwise, server makes move
-    return makeMove(body)
+    const resp = makeMove(body)
+
+    game.grid = resp.grid ?? game.grid
+    game.winner = resp.winner ?? game.winner
+
+    await game.save()
+
+    return resp
 }
 
 export const makeMove = (body: TTTGrid): TTTResponse => {

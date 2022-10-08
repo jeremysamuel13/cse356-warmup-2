@@ -20,8 +20,9 @@ import * as ttt_db from './db/ttt'
 import { authenticateJWT, registerUser } from './auth/user'
 import passport from 'passport'
 import cookieParser from 'cookie-parser'
-import { User } from './db/models';
+import { Game, User } from './db/models';
 import { createTransport } from 'nodemailer'
+import { UserGame } from './db/models'
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -40,7 +41,7 @@ APP.use(cookieParser());
 
 // Set Header
 APP.use((req, res, next) => {
-    if (req.method === 'GET' || req.method === 'POST') {
+    if (req.method === 'POST') {
         res.setHeader("X-CSE356", "63094ca6047a1139b66d985a")
     }
 
@@ -50,10 +51,20 @@ APP.use((req, res, next) => {
 APP.get('/', (req, res) => res.send("Welcome from server!"))
 
 // TTT API
-APP.post('/ttt/play', (req: Request<TTTRequest>, res: Response<TTTResponse>) => {
+APP.post('/ttt/play', async (req: Request<TTTRequest>, res: Response<TTTResponse>) => {
     console.log(req.body)
 
-    const resBody = advance(req.body.grid)
+    const { username, password } = req.cookies;
+    if (!username || !password) {
+        return res.json({ status: 'ERROR' });
+    }
+    const user = await User.findOne({ username: username, password: password });
+    if (!user) {
+        console.log("User not found")
+        return res.json({ status: 'ERROR' });
+    }
+
+    const resBody = await advance(user, req.body.move)
 
     console.log(resBody)
 
@@ -97,11 +108,18 @@ APP.post('/adduser', async (req: Request<{ username: string, password: string, e
         return res.json({ status: 'ERROR' })
     }
 
+    const dups = await User.find({ $or: [{ email }, { username }] })
+
+    if (dups && dups.length > 0) {
+        console.log("User already created!")
+        return res.json({ status: 'ERROR' })
+    }
+
     const verificationKey = uuidv4();
 
     await ttt_db.putUser(username, email, password, verificationKey)
 
-    const verificationLink = `http://mahirjeremy.cse356.compas.cs.stonybrook.edu/verify?email=${email}&verificationKey=${verificationKey}`
+    const verificationLink = `http://mahirjeremy.cse356.compas.cs.stonybrook.edu/verify?email=${encodeURIComponent(email)}&verificationKey=${verificationKey}`
 
     const transport = createTransport({
         sendmail: true,
@@ -167,6 +185,48 @@ APP.post('/logout', async (req, res) => {
 
     }
     return res.json({ status: 'ERROR' });
+})
+
+APP.post('/listgames', async (req, res) => {
+    console.log("List games")
+
+    const { username, password } = req.cookies;
+    if (!username || !password) {
+        return res.json({ status: 'ERROR' });
+    }
+    const user = await User.findOne({ username: username, password: password });
+    if (!user) {
+        console.log("User not found")
+        return res.json({ status: 'ERROR' });
+    }
+
+
+    console.log("Fetching games")
+
+
+    const games = await Promise.all(user.games.map(async (x) => {
+        console.log(x)
+        const userGame = await UserGame.findById(x)
+        return { start_date: userGame.start_date, id: userGame.game_id }
+    }))
+
+    return res.json({ status: 'OK', games })
+
+})
+
+APP.post('/getgame', async (req, res) => {
+    const { username, password } = req.cookies;
+    if (!username || !password) {
+        return res.json({ status: 'ERROR' });
+    }
+    const user = await User.findOne({ username: username, password: password });
+    if (!user || !req.body.id) {
+        return res.json({ status: 'ERROR' });
+    }
+
+    const game = await Game.findById(req.body.id)
+
+    return res.json({ status: 'OK', grid: game.grid, winner: game.winner })
 })
 
 

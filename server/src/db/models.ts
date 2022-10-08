@@ -2,7 +2,7 @@ import { Schema, model, ObjectId } from 'mongoose';
 import { TTTGrid, Winner } from '../ttt/interface'
 
 
-interface IUserGame {
+export interface IUserGame {
     user_id: ObjectId,
     start_date: Date,
     game_id: ObjectId
@@ -17,7 +17,7 @@ export interface IUser {
     games: Array<ObjectId>
 }
 
-interface IGame {
+export interface IGame {
     grid: TTTGrid,
     winner: Winner
     user_game_id: ObjectId
@@ -43,7 +43,7 @@ const userGameSchema = new Schema<IUserGame>({
 })
 
 const gameSchema = new Schema<IGame>({
-    grid: { type: [{ type: String, enum: ['X', 'O', ' '] }], validate: (val: TTTGrid) => val.length < 9 },
+    grid: { type: [{ type: String, enum: ['X', 'O', ' '] }], validate: (val: TTTGrid) => { val.length === 9 } },
     winner: { type: String, enum: ['X', 'O', 'T', ' '], default: ' ' },
     user_game_id: { type: Schema.Types.ObjectId, required: true, ref: 'UserGame' }
 })
