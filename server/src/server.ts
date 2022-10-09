@@ -229,6 +229,45 @@ APP.post('/getgame', async (req, res) => {
     return res.json({ status: 'OK', grid: game.grid, winner: game.winner })
 })
 
+APP.post('/getscore', async (req, res) => {
+    const { username, password } = req.cookies;
+    if (!username || !password) {
+        return res.json({ status: 'ERROR' });
+    }
+    const user = await User.findOne({ username: username, password: password });
+    if (!user || !req.body.id) {
+        return res.json({ status: 'ERROR' });
+    }
+
+
+    const games = await Promise.all(user.games.map(async (x) => {
+        console.log(x)
+        const userGame = await UserGame.findById(x)
+        const game = await Game.findById(userGame.game_id)
+
+
+        return game;
+    }))
+
+    const record = {
+        human: 0,
+        wopr: 0,
+        tie: 0
+    }
+
+    games.forEach(game => {
+        if (game.winner === 'X') {
+            record.human++;
+        } else if (game.winner === 'O') {
+            record.wopr++;
+        } else if (game.winner === 'T') {
+            record.tie++;
+        }
+    })
+
+    return { ...record, status: 'OK' }
+})
+
 
 // Init db then start server
 const DB_HOST = process.env.DB_HOST
